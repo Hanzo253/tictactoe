@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <title>Tic-Tac-Toe</title>
+    <style>
+      
+      body {
+    	  margin: 0;
+    	  background-color: thistle;
+      }
+
+      .title {
+    	  color: steelblue;
+    	  text-align: center;
+      }
+
+      .startMenu {
+    	  display: flex;
+    	  flex-direction: column;
+    	  align-items: center;
+    	  justify-content: space-around;
+      }
+
+      td {
+    	  border: 2px solid #333;
+    	  height: 100px;
+    	  width: 100px;
+    	  text-align: center;
+    	  vertical-align: middle;
+    	  font-family: "comic Sans MS", cursive, sans-serif;
+    	  font-size: 70px;
+    	  cursor: pointer;
+      }
+
+      table {
+    	  border-collapse: collapse;
+    	  position: absolute;
+    	  top: 30%;
+    	  left: 43%;
+    	  display: grid;
+    	  justify-content: center;
+    	  align-content: center;
+      }
+
+      table tr:first-child td {
+    	  border-top: 0;
+      }
+
+      table tr:last-child td {
+    	  border-bottom: 0;
+      }
+
+      table tr td:first-child {
+    	  border-left: 0;
+      }
+
+      table tr td:last-child {
+    	  border-right: 0;
+      }
+
+      .box:hover {
+    	  background-color: lavender;
+      }
+
+      .winner {
+	  background-color: green;
+      }
+
+      .loser {
+	  background-color: crimson;
+      }
+
+      .draw {
+	  background-color: steelblue;
+      }
+
+      .endgame {
+	  display: none;
+	  width: 200px;
+	  top: 120px;
+	  background-color: rgba(205, 133, 63, 0.8);
+	  position: absolute;
+	  left: 50%;
+	  margin-left: -100px;
+	  padding-top: 50px;
+	  text-align: center;
+	  border-radius: 5px;
+	  color: white;
+	  font-size: 2em;
+      }
+
+      .win-message {
+	  position: fixed;
+	  top: 0;
+	  left: 0;
+	  right: 0;
+	  bottom: 0;
+	  display: flex;
+	  justify-content: center;
+	  align-items: center;
+	  color: white;
+	  font-size: 2rem;
+	  display: none;
+      }
+
+      .win-message button {
+	  position: absolute;
+	  left: 44.5%;
+	  top: 75%;
+	  font-size: 2rem;
+	  background-color: white;
+	  border: 1px solid black;
+	  padding: .25em .5em;
+	  cursor: pointer;
+      }
+
+      .win-message button:hover {
+	  background-color: black;
+	  color: white;
+	  border-color: white;
+      }
+
+      .win-message.show {
+      	  display: flex;
+      }
+
+      .win-text {
+	  position: absolute;
+	  left: 44.5%;
+	  top: 70%;
+	  color: black;
+      }
+
+      .tie {
+	  position: absolute;
+	  top: 70%;
+	  color: black;
+      }
+
+      
+      .player-win {
+	  position: absolute;
+	  top: 70%;
+	  color: black;
+      }
+
+      .start  {
+	  color: lime;
+	  font-size: 2em;
+      }
+
+      #turn {
+	  text-align: center;
+	  color: darkslateblue;
+	  font-family: "Arial Black", Gadget, sans-serif;
+	  font-size: 150%;
+	  display: none;
+      }
+
+      .score {
+	  color: teal;
+	  height: 20vh;
+	  display: flex;
+	  justify-content: space-around;
+	  align-items: center;
+      }
+
+      .score h2 {
+	  font-size: 30px;
+      }
+
+      .score p {
+	  text-align: center;
+	  padding: 10px;
+	  font-size: 25px;
+      }
+	  
+    </style>
+  </head>
+  <body>
+    <h1 class="title">Tic Tac Toe!</h1>
+    <div class="startMenu">
+      <p class="start">Choose the symbol you want to be.</p>
+      <button type="button" id="x" class="btn btn-outline-info btn-lg">X</button>
+      <button type="button" id="o" class="btn btn-outline-danger btn-lg">O</button>
+      <br>
+      <button type="button" id="reset-score" class="btn btn-outline-dark btn-lg">Reset Score</button>
+    </div>
+    <p id="turn">Player's turn</p>
+    <div class="score">
+      <div class="player-score">
+	<h2>Player</h2>
+	<p>0</p>
+      </div>
+      <div class="computer-score">
+	  <h2>Computer</h2>
+	  <p>0</p>
+      </div>
+    </div>
+    <table class="board">
+      <tr class="row">
+	<td class="box" id="box0"></td>
+	<td class="box" id="box1"></td>
+	<td class="box" id="box2"></td>
+      </tr>
+      <tr class="row">
+	<td class="box" id="box3"></td>
+	<td class="box" id="box4"></td>
+	<td class="box" id="box5"></td>
+      </tr>
+      <tr class="row">
+	<td class="box" id="box6"></td>
+	<td class="box" id="box7"></td>
+	<td class="box" id="box8"></td>
+      </tr>
+    </table>
+    <div class="win-message" id="victory-message">
+      <div class="win-text"></div>
+      <div class="tie"></div>
+      <div class="player-win"></div>
+      <button id="restart-button">Restart Game</button>
+    </div>
+    <script>
+      $(document).ready(function() {
+
+	  // ai and human variables
+	  var human, ai;
+
+	  // box and button variables
+	  const victoryMessageElement = document.getElementById("victory-message");
+    	  const winMessageTextElement = document.getElementsByClassName("win-text");
+    	  const restartButton = document.getElementById("restart-button");
+	  const resetScore = document.getElementById("reset-score");
+	  const boxes = document.getElementsByClassName("box");
+	  const box0 = document.getElementById("box0");
+	  const box1 = document.getElementById("box1");
+	  const box2 = document.getElementById("box2");
+	  const box3 = document.getElementById("box3");
+	  const box4 = document.getElementById("box4");
+	  const box5 = document.getElementById("box5");
+	  const box6 = document.getElementById("box6");
+	  const box7 = document.getElementById("box7");
+	  const box8 = document.getElementById("box8");
+	  
+
+	  // these variables represent the boxes on the board
+	  var b0, b1, b2, b3, b4, b5, b7, b8, b9;
+
+	  // keeps track of whose turn it is
+	  var turn = 0;
+	  var aiTurn;
+
+	  // scores
+	  let playerPoints = 0;
+	  let computerPoints = 0;
+
+	  // the player selects x or o
+	  $(".board").css({'opacity' : 0});
+    	  $(".board").fadeOut();
+	  $("#turn").fadeOut();
+    	  $("#x").click(function() {
+    	      $(".board").css({'opacity' : 1});
+    	      $(".board").fadeIn();
+    	      human = "X";
+    	      ai = "O";
+	      $("#x").hide();
+	      $("#o").hide();
+	      $(".start").hide();
+	      $("#turn").fadeIn();
+	      $("#reset-score").hide();
+    	  });
+	  
+    	  $("#o").click(function() {
+    	      $(".board").css({'opacity' : 1});
+    	      $(".board").fadeIn();
+    	      human = "O";
+    	      ai = "X";
+	      $("#x").hide();
+	      $("#o").hide();
+	      $(".start").hide();
+	      $("#turn").fadeIn();
+	      $("#reset-score").hide();
+    	  });
+	  
+	  victoryMessageElement.classList.remove("show");
+	  restartButton.addEventListener('click', clearBoard);
+	  resetScore.addEventListener('click', resetPoints);
+	  
+	  // clears the board and restarts the game
+	  function clearBoard() {
+	      $(".box").each(function() {
+		  $(this).text("");
+		  $(this).removeClass("winner");
+		  $(this).removeClass("loser");
+		  $(this).removeClass("draw");
+	      });
+	      turn = 0;
+	      $(".board").css({'opacity' : 0});
+    	      $(".board").fadeOut();
+	      victoryMessageElement.classList.remove("show");
+	      $("#x").fadeIn();
+	      $("#o").fadeIn();
+	      $(".start").fadeIn();
+	      $("#reset-score").fadeIn();
+	      $(".win-text").hide();
+	      $(".tie").hide();
+	      $(".player-win").hide();
+	      $("#turn").hide();
+	  }
+
+	  // resets the scores
+	  function resetPoints() {
+	      const playerScore = document.querySelector(".player-score p");
+	      const computerScore = document.querySelector(".computer-score p");
+	      playerScore.innerHTML = 0;
+	      computerScore.textContent = 0;
+	  }
+
+	  // This handles the player's click input and checks if the player is clicking on an empty box
+	  $("td").click(function() {
+	      if (turn === 0) {
+		  if ($(this).text() === "") {
+		      $(this).text(human);
+		      checkSquareValues();
+		      checkBoardState();
+		      turn = 1;
+		      if (turn === 1) {
+			  $("#turn").text("Computer's turn");
+			  $("#turn").css("color", "darkred");
+		      }
+		      aiTurn = setTimeout(function() {aiTurnCheck();}, 1000);
+		      checkSquareValues();
+		      checkBoardState();
+		      
+		  }
+
+		  else {
+		      alert("This box is not empty! Please choose another box.");
+		  }
+	      }
+	  }); // click box function
+
+	  // checks if the ai has chosen a box on its turn 
+	  function aiTurnCheck() {
+	      aiMove();
+	      checkSquareValues();
+	      checkBoardState();
+	      if (turn === 0) {
+		  $("#turn").text("Player's turn");
+		  $("#turn").css("color", "darkslateblue");
+	      }
+	  }
+
+	  // The ai puts its token in an empty square based on some of the prioritized rules from https://en.wikipedia.org/wiki/Tic-tac-toe#Strategy:
+	  function aiMove() {
+	      // if there is a chance to win, the ai will play the winning move
+	      if (b0 === "" && ((b1 === ai && b2 === ai) || (b3 === ai && b6 === ai) || (b4 === ai && b8 === ai))) {
+		  $("#box0").text(ai);
+		  turn = 0;
+	      }
+	      else if (b1 === "" && ((b0 === ai && b2 === ai) || (b4 === ai && b7 === ai))) {
+		  $("#box1").text(ai);
+		  turn = 0;
+	      }
+	      else if (b2 === "" && ((b0 === ai && b1 === ai) || (b5 === ai && b8 === ai) || (b4 === ai && b6 === ai))) {
+		  $("#box2").text(ai);
+		  turn = 0;
+	      }
+	      else if (b3 === "" && ((b0 === ai && b6 === ai) || (b4 === ai && b5 === ai))) {
+		  $("#box3").text(ai);
+		  turn = 0;
+	      }
+	      else if (b4 === "" && ((b3 === ai && b5 === ai) || (b0 === ai && b8 === ai) || (b2 === ai && b6 === ai))) {
+		  $("#box4").text(ai);
+		  turn = 0;
+	      }
+	      else if (b5 === "" && ((b3 === ai && b4 === ai) || (b2 === ai && b8 === ai))) {
+		  $("#box5").text(ai);
+		  turn = 0;
+	      }
+	      else if (b6 === "" && ((b7 === ai && b8 === ai) || (b0 === ai && b3 === ai) || (b2 === ai && b4 === ai))) {
+		  $("#box6").text(ai);
+		  turn = 0;
+	      }
+	      else if (b7 === "" && ((b6 === ai && b8 === ai) || (b1 === ai && b4 === ai))) {
+		  $("#box7").text(ai);
+		  turn = 0;
+	      }
+	      else if (b8 === "" && ((b6 === ai && b7 === ai) || (b2 === ai && b5 === ai) || (b0 === ai && b4 === ai))) {
+		  $("#box8").text(ai);
+		  turn = 0;
+	      }
+	      // if there is a chance to block the player, the ai will put its symbol on the spot that will do so.
+	      else if (b0 === "" && ((b1 === human && b2 === human) || (b3 === human && b6 === human) || (b4 === human && b8 === human))) {
+		  $("#box0").text(ai);
+		  turn = 0;
+	      }
+	      else if (b1 === "" && ((b0 === human && b2 === human) || (b4 === human && b7 === human))) {
+		  $("#box1").text(ai);
+		  turn = 0;
+	      }
+	      else if (b2 === "" && ((b0 === human && b1 === human) || (b5 === human && b8 === human) || (b4 === human && b6 === human))) {
+		  $("#box2").text(ai);
+		  turn = 0;
+	      }
+	      else if (b3 === "" && ((b0 === human && b6 === human) || (b4 === human && b5 === human))) {
+		  $("#box3").text(ai);
+		  turn = 0;
+	      }
+	      else if (b4 === "" && ((b3 === human && b5 === human) || (b0 === human && b8 === human) || (b2 === human && b6 === human))) {
+		  $("#box4").text(ai);
+		  turn = 0;
+	      }
+	      else if (b5 === "" && ((b3 === human && b4 === human) || (b2 === human && b8 === human))) {
+		  $("#box5").text(ai);
+		  turn = 0;
+	      }
+	      else if (b6 === "" && ((b7 === human && b8 === human) || (b0 === human && b3 === human) || (b2 === human && b4 === human))) {
+		  $("#box6").text(ai);
+		  turn = 0;
+	      }
+	      else if (b7 === "" && ((b6 === human && b8 === human) || (b1 === human && b4 === human))) {
+		  $("#box7").text(ai);
+		  turn = 0;
+	      }
+	      else if (b8 === "" && ((b6 === human && b7 === human) || (b2 === human && b5 === human) || (b0 === human && b4 === human))) {
+		  $("#box8").text(ai);
+		  turn = 0;
+	      }
+	      // ai puts its symbol on the center of the board
+	      else if (b4 === "") {
+		  $("#box4").text(ai);
+		  turn = 0;
+	      }
+	      // ai tries to block  the opposite corner
+	      else if (b0 === "" && (b2 === human  || b6 === human)) {
+		  $("#box0").text(ai);
+		  turn = 0;
+	      }
+	      else if (b2 === "" && (b0 === human  || b8 === human)) {
+		  $("#box2").text(ai);
+		  turn = 0;
+	      }
+	      else if (b8 === "" && (b2 === human  || b6 === human)) {
+		  $("#box8").text(ai);
+		  turn = 0;
+	      }
+	      else if (b6 === "" && (b0 === human  || b8 === human)) {
+		  $("#box6").text(ai);
+		  turn = 0;
+	      }
+	      // ai puts its symbol in a corner
+	      else if (b0 === "") {
+		  $("#box0").text(ai);
+		  turn = 0;
+	      }
+	      else if (b2 === "") {
+		  $("#box2").text(ai);
+		  turn = 0;
+	      }
+	      else if (b6 === "") {
+		  $("#box6").text(ai);
+		  turn = 0;
+	      }
+	      else if (b8 === "") {
+		  $("#box8").text(ai);
+		  turn = 0;
+	      }
+	      // ai puts its symbol in an empty side
+	      else if (b1 === "") {
+		  $("#box1").text(ai);
+		  turn = 0;
+	      }
+	      else if (b5 === "") {
+		  $("#box5").text(ai);
+		  turn = 0;
+	      }
+	      else if (b7 === "") {
+		  $("#box7").text(ai);
+		  turn = 0;
+	      }
+	      else if (b3 === "") {
+		  $("#box3").text(ai);
+		  turn = 0;
+	      }
+	  }
+
+	  // this function returns what is in each box after each move.
+	  function checkSquareValues() {
+	      b0 = $("#box0").html();
+	      b1 = $("#box1").html();
+	      b2 = $("#box2").html();
+	      b3 = $("#box3").html();
+	      b4 = $("#box4").html();
+	      b5 = $("#box5").html();
+	      b6 = $("#box6").html();
+	      b7 = $("#box7").html();
+	      b8 = $("#box8").html();
+	  }
+
+	  // updates the ai score
+	  function computerScoreUpdate() {
+	      const computerScore = document.querySelector(".computer-score p");
+	      computerScore.textContent = computerPoints;
+	      return;
+	  }
+
+	  // updates the player score
+	  function playerScoreUpdate() {
+	      const playerScore = document.querySelector(".player-score p");
+	      playerScore.textContent = playerPoints;
+	      playerPoints++;
+	      return;
+	  }
+
+	  // this function checks if the game should keep going, a winner has been declared, or a tie has happened.
+	  function checkBoardState() {
+	      // human wins
+
+	      if (b0 === b1 && b0 === b2 && (b0 === human)) {
+		  box0.classList.add("winner");
+		  box1.classList.add("winner");
+		  box2.classList.add("winner");
+	      }
+
+	      else if (b0 === b1 && b0 === b2 && (b0 === ai)) {
+		  box0.classList.add("loser");
+		  box1.classList.add("loser");
+		  box2.classList.add("loser");
+	      }
+
+	      if (b3 === b4 && b3 === b5 && (b3 === human)) {
+		  box3.classList.add("winner");
+		  box4.classList.add("winner");
+		  box5.classList.add("winner");
+	      }
+
+	      else if (b3 === b4 && b3 === b5 && (b3 === ai)) {
+		  box3.classList.add("loser");
+		  box4.classList.add("loser");
+		  box5.classList.add("loser");
+	      } 
+
+	      if (b6 === b7 && b6 === b8 && (b6 === human)) {
+		  box6.classList.add("winner");
+		  box7.classList.add("winner");
+		  box8.classList.add("winner");
+	      }
+
+	      else if (b6 === b7 && b6 === b8 && (b6 === ai)) {
+		  box6.classList.add("loser");
+		  box7.classList.add("loser");
+		  box8.classList.add("loser");
+	      }
+
+	      if (b0 === b3 && b0 === b6 && (b0 === human)) {
+		  box0.classList.add("winner");
+		  box3.classList.add("winner");
+		  box6.classList.add("winner");
+	      }
+
+	      else if (b0 === b3 && b0 === b6 && (b0 === ai)) {
+		  box0.classList.add("loser");
+		  box3.classList.add("loser");
+		  box6.classList.add("loser");
+	      }
+
+	      if (b1 === b4 && b1 === b7 && (b1 === human)) {
+		  box1.classList.add("winner");
+		  box4.classList.add("winner");
+		  box7.classList.add("winner");
+	      }
+
+	      else if (b1 === b4 && b1 === b7 && (b1 === ai)) {
+		  box1.classList.add("loser");
+		  box4.classList.add("loser");
+		  box7.classList.add("loser");
+	      }
+
+	      if (b2 === b5 && b2 === b8 && (b2 === human)) {
+		  box2.classList.add("winner");
+		  box5.classList.add("winner");
+		  box8.classList.add("winner");
+	      }
+
+	      else if (b2 === b5 && b2 === b8 && (b2 === ai)) {
+		  box2.classList.add("loser");
+		  box5.classList.add("loser");
+		  box8.classList.add("loser");
+	      }
+
+	      if (b0 === b4 && b0 === b8 && (b0 === human)) {
+		  box0.classList.add("winner");
+		  box4.classList.add("winner");
+		  box8.classList.add("winner");
+	      }
+
+	      else if (b0 === b4 && b0 === b8 && (b0 === ai)) {
+		  box0.classList.add("loser");
+		  box4.classList.add("loser");
+		  box8.classList.add("loser");
+	      } 
+
+	      if (b2 === b4 && b2 === b6 && (b2 === human)) {
+		  box2.classList.add("winner");
+		  box4.classList.add("winner");
+		  box6.classList.add("winner");
+	      }
+
+	      else if (b2 === b4 && b2 === b6 && (b2 === ai)) {
+		  box2.classList.add("loser");
+		  box4.classList.add("loser");
+		  box6.classList.add("loser");
+	      }  
+	      
+	      if ((b0 === b1 && b0 === b2 && (b0 === human)) || //first row
+		  (b3 === b4 && b3 === b5 && (b3 === human)) || //second row
+		  (b6 === b7 && b6 === b8 && (b6 === human)) || //third row
+		  (b0 === b3 && b0 === b6 && (b0 === human)) || //first column
+		  (b1 === b4 && b1 === b7 && (b1 === human)) || //second column
+		  (b2 === b5 && b2 === b8 && (b2 === human)) || //third column
+		  (b0 === b4 && b0 === b8 && (b0 === human)) || //diagonal 1
+		  (b2 === b4 && b2 === b6 && (b2 === human)) //diagonal 2
+		 ) {
+		  clearTimeout(aiTurn);
+		  $(".player-win").text("Player wins!");
+		  victoryMessageElement.classList.add("show");
+		  $(".player-win").show();
+		  playerScoreUpdate();
+		  $("#turn").hide();
+	      }
+	      
+	      // ai wins
+	      else if ((b0 === b1 && b0 === b2 && (b0 === ai)) || //first row
+		       (b3 === b4 && b3 === b5 && (b3 === ai)) || //second row
+		       (b6 === b7 && b6 === b8 && (b6 === ai)) || //third row
+		       (b0 === b3 && b0 === b6 && (b0 === ai)) || //first column
+		       (b1 === b4 && b1 === b7 && (b1 === ai)) || //second column
+		       (b2 === b5 && b2 === b8 && (b2 === ai)) || //third column
+		       (b0 === b4 && b0 === b8 && (b0 === ai)) || //diagonal 1
+		       (b2 === b4 && b2 === b6 && (b2 === ai)) //diagonal 2
+		      ) {
+		  $(".win-text").text("Computer wins!");
+		  victoryMessageElement.classList.add("show");
+		  $(".win-text").show();
+		  computerPoints++;
+		  computerScoreUpdate();
+		  $("#turn").hide();
+	      }
+	      // tie
+	      else if (b0 && b1 && b2 && b3 && b4 && b5 && b6 && b7 && b8) {
+		  $(".tie").text("It is a Tie!");
+		  victoryMessageElement.classList.add("show");
+		  $(".tie").show();
+		  $(".box").each(function() {
+		      $(this).addClass("draw");
+		  });
+		  $("#turn").hide();
+	      }
+	  }
+      }); // ready function
+      
+    </script>
+  </body>
+</head>
+	  
+	     
+      
